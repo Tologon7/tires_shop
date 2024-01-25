@@ -6,15 +6,20 @@ from django.db.models import Sum
 from users.managers import SuperUser
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
+from django.utils import timezone
+import string
+import random
 
-class User(AbstractBaseUser):
-    username = models.CharField(max_length=255, unique=True, null=True)
+
+class User(PermissionsMixin, AbstractBaseUser):
+    username = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
     is_staff = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     first_name = models.CharField(max_length=255, null=True, blank=True)
     last_name = models.CharField(max_length=255, null=True, blank=True)
+    surname = models.CharField(max_length=255, null=True, blank=True, verbose_name='Отчество')
     address = models.CharField(max_length=255, null=True, blank=True)
     phone = models.CharField(max_length=255, null=True, blank=True)
 
@@ -24,7 +29,7 @@ class User(AbstractBaseUser):
     objects = SuperUser()
 
     def __str__(self):
-        return self.username
+        return str(self.username)
 
 
 class Points(models.Model):
@@ -50,3 +55,19 @@ class FeedBack(models.Model):
 
     def __str__(self):
         return self.user.email
+
+
+class OTP(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    otp = models.CharField(max_length=4, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    @staticmethod
+    def generate_otp():
+        digits = string.digits
+        return ''.join(random.choice(digits) for i in range(4))
+
+    @property
+    def is_expired(self):
+        time_threshold = timezone.now() - timezone.timedelta(minutes=5)
+        return self.created_at < time_threshold
