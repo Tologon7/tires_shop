@@ -32,7 +32,11 @@ class Order(models.Model):
 
 
 class Favorite(models.Model):
-    total_price = models.FloatField(default=0)
     creation_date = models.DateTimeField(auto_now_add=True)
-    update_date = models.DateTimeField(auto_now=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tires = models.ForeignKey(Tires, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"user: {self.user}, tires: {self.tires}"
+
 

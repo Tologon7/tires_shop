@@ -106,6 +106,7 @@ class VerifyEmailView(GenericAPIView):
 
         return Response({"error": "Activation failed"}, status=status.HTTP_400_BAD_REQUEST)
 
+
 class UserProfileView(generics.GenericAPIView):
     serializer_class = UserProfileSerializer
     permission_classes = [IsAuthenticated]

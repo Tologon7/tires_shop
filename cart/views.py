@@ -21,4 +21,3 @@ class Order(generics.ListCreateAPIView):
 class Favorite(generics.ListCreateAPIView):
     serializer_class = FavoriteSerializer
     queryset = Favorite.objects.all()
-

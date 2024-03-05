@@ -93,10 +93,10 @@ class PointsSerializer(serializers.ModelSerializer):
         fields = ['points']
 
 
-class FeedBackSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = FeedBack
-        fields = ['title', 'content', 'rating']
+# class FeedBackSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = FeedBack
+#         fields = ['title', 'content', 'rating']
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

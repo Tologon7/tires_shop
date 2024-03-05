@@ -58,23 +58,11 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
-    # total_price = serializers.SerializerMethodField()
 
     class Meta:
         model = Favorite
         fields = [
-            "id",
-            "total_price",
-            "creation_date",
-            "update_date",
+            # "id",
+            "user",
+            "tires",
         ]
-
-    def get_total_price(self, obj):
-        cart_items = CartItem.objects.filter(cart=obj.id)
-        total_price = 0
-        for i in cart_items:
-            total_price += i.favorite.price * i.quantity
-        return total_price
-
-
-
