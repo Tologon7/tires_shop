@@ -62,7 +62,18 @@ class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favorite
         fields = [
-            # "id",
+            "id",
             "user",
             "tires",
         ]
+
+    def validate(self, data):
+        user = data.get("user")
+        tires = data.get("tires")
+
+        if Favorite.objects.filter(user=user, tires=tires).exists():
+            raise serializers.ValidationError(
+                {"error": "This tire is already in user's favorites list"}
+            )
+
+        return data

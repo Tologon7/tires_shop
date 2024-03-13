@@ -5,24 +5,24 @@ from rest_framework.authtoken.models import Token
 
 
 class Width(models.Model):
-    width = models.IntegerField()
+    title = models.IntegerField()
 
     def __str__(self):
-        return f"{self.width}"
+        return f"{self.title}"
 
 
 class Profile(models.Model):
-    profile = models.FloatField()
+    title = models.CharField(max_length=10)
 
     def __str__(self):
-        return f'{self.profile}'
+        return f'{self.title}'
 
 
 class Diameter(models.Model):
-    diameter = models.FloatField()
+    title = models.FloatField()
 
     def __str__(self):
-        return f'{self.diameter}'
+        return f'{self.title}'
 
 
 class CarType(models.Model):
@@ -54,55 +54,56 @@ class SpeedIndex(models.Model):
 
 
 class LoadIndex(models.Model):
-    load = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
 
     def __str__(self):
-        return f'{self.load}'
+        return f'{self.title}'
 
 
 class FuelEconomy(models.Model):
-    category = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
 
     def __str__(self):
-        return f'{self.category}'
+        return f'{self.title}'
 
 
 class GripOnWetSurfaces(models.Model):
-    category = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
 
     def __str__(self):
-        return f'{self.category}'
+        return f'{self.title}'
 
 
 class LoadIndexForDual(models.Model):
-    dual = models.CharField(max_length=150)
+    title = models.CharField(max_length=150)
 
     def __str__(self):
-        return f'{self.dual}'
+        return f'{self.title}'
 
 
 class Model(models.Model):
-    model = models.CharField(max_length=200)
+    title = models.CharField(max_length=200)
 
     def __str__(self):
-        return f'{self.model}'
+        return f'{self.title}'
 
 
 class ExternalNoiseLevel(models.Model):
-    decibel = models.IntegerField()
+    title = models.IntegerField()
 
     def __str__(self):
-        return f'{self.decibel}'
+        return f'{self.title}'
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
 
     def __str__(self):
-        return f'{self.name}'
+        return f'{self.title}'
 
 
 class Tires(models.Model):
+    title = models.CharField(max_length=100, blank=True, null=True)
     category = models.ForeignKey('Category', on_delete=models.CASCADE, blank=True, null=True)
     width = models.ForeignKey('Width', on_delete=models.CASCADE, blank=True, null=True)
     profile = models.ForeignKey('Profile', on_delete=models.CASCADE, blank=True, null=True)
@@ -125,6 +126,9 @@ class Tires(models.Model):
     in_stock = models.BooleanField(blank=True, null=True)
     model = models.ForeignKey('Model', on_delete=models.CASCADE,  blank=True, null=True)
     load_index_for_dual = models.ForeignKey('LoadIndexForDual', on_delete=models.CASCADE,  blank=True, null=True)
+
+    def __str__(self):
+        return str(self.title)
 
 
 # class Reviews(models.Model):

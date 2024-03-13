@@ -36,7 +36,9 @@ class Favorite(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     tires = models.ForeignKey(Tires, on_delete=models.CASCADE)
 
+    class Meta:
+        unique_together = ['user', 'tires']
+
     def __str__(self):
         return f"user: {self.user}, tires: {self.tires}"
-
 

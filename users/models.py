@@ -29,7 +29,7 @@ class User(PermissionsMixin, AbstractBaseUser):
     objects = SuperUser()
 
     def __str__(self):
-        return str(self.username)
+        return str(self.first_name)
 
 
 class Points(models.Model):
