@@ -4,6 +4,7 @@ from .models import (
     CartItem,
     Order,
     Favorite,
+    User
 )
 
 
@@ -44,10 +45,18 @@ class CartItemSerializer(serializers.ModelSerializer):
     def validate(self, data):
         quantity = data["quantity"]
         tires = data["tires"]
+        user = data['user']
+
         if quantity > tires.quantity:
             raise serializers.ValidationError(
                 {"error": "The quantity of your request is less than the quantity of the product itself!"}
             )
+
+        if CartItem.objects.filter(tires=tires, cart__user=user).exists():
+            raise serializers.ValidationError(
+                {"error": "This product is already in the cart"}
+            )
+
         return data
 
 
