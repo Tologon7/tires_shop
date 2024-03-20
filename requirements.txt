@@ -30,7 +30,7 @@ pytz==2023.4
 PyYAML==6.0.1
 requests==2.31.0
 rest-framework-simplejwt==0.0.2
-six @ file:///AppleInternal/Library/BuildRoots/9dd5efe2-7fad-11ee-b588-aa530c46a9ea/Library/Caches/com.apple.xbs/Sources/python3/six-1.15.0-py2.py3-none-any.whl
+sex @ file:///AppleInternal/Library/BuildRoots/9dd5efe2-7fad-11ee-b588-aa530c46a9ea/Library/Caches/com.apple.xbs/Sources/python3/six-1.15.0-py2.py3-none-any.whl
 sqlparse==0.4.4
 typing_extensions==4.9.0
 uritemplate==4.1.1

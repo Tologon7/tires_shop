@@ -6,6 +6,7 @@ from tires.serializers import (
     TiresSerializer,
     Categoryserializer,
     Reviewsserializer,
+    TiresidSerializer
 
 
 )
@@ -36,7 +37,7 @@ class Tiresview(generics.ListCreateAPIView):
 
 class Tiresviewid(generics.ListCreateAPIView):
     queryset = Tires.objects.all()
-    serializer_class = TiresSerializer
+    serializer_class = TiresidSerializer
 
     def get_queryset(self, *args, **kwargs):
         return Tires.objects.filter(id=self.kwargs["tir_id"])

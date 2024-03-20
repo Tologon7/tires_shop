@@ -6,6 +6,20 @@ class TiresSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tires
+        fields = [
+            'id',
+            'title',
+            'price',
+            'promotion',
+            'in_stock',
+            'state'
+        ]
+
+
+class TiresidSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Tires
         fields = '__all__'
 
 
