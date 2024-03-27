@@ -80,3 +80,16 @@ class ReviewsView(generics.ListCreateAPIView):
 #
 #
 #     return Response({'mesic':'hello'})
+
+class TiresRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Tires.objects.all()
+    serializer_class = TiresidSerializer
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+    def get_queryset(self, *args, **kwargs):
+        return Tires.objects.filter(id=self.kwargs["pk"])
