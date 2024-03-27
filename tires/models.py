@@ -133,6 +133,8 @@ class Tires(models.Model):
         return str(self.title)
 
 
+
+
 # class Reviews(models.Model):
 #     tires = models.ForeignKey(Tires, on_delete=models.CASCADE, related_name='reviews')
 #     user = models.ForeignKey(User, on_delete=models.CASCADE)

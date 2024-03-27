@@ -10,6 +10,8 @@ from tires.serializers import (
 
 
 )
+from rest_framework import status
+from django.db.models import Count
 from tires.models import (
     Tires,
     Category,
@@ -57,21 +59,37 @@ class Tiresviewid(generics.ListCreateAPIView):
 #         return {"user_id": user_id, "tir_id": tir_id}
 
 
-class ReviewsView(generics.ListCreateAPIView):
+class ReviewsView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Reviews.objects.all()
     serializer_class = Reviewsserializer
-    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = Reviewsserializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_queryset(self):
-        rev_id = self.kwargs.get("rev_id")
-        if rev_id is not None:
-            return Reviews.objects.filter(id=rev_id)
-        return Reviews.objects.all()
+        if 'pk' in self.kwargs:
+            return Reviews.objects.filter(id=self.kwargs["pk"])
+        else:
+            return Reviews.objects.annotate(num_reviews=Count('reviews')).order_by('-num_reviews')
 
-    def get_serializer_context(self):
-        user_id = self.request.user.id
-        tir_id = self.kwargs.get("tir_id")
-        return {"user_id": user_id, "tir_id": tir_id}
+
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 #
