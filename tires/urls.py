@@ -1,17 +1,6 @@
 from django.urls import path
-from .views import (
-    Tiresviewid,
-    Tiresview,
-    Categoryviewid,
-    Categoryview,
-    ReviewsView,
+from .views import *
 
-
-
-
-
-
-)
 
 urlpatterns = [
 
@@ -20,10 +9,6 @@ urlpatterns = [
     path('list/<int:tir_id>/', Tiresviewid.as_view()),
     path('list/', Tiresview.as_view()),
     path('reviews/<int:rev_id>/', ReviewsView.as_view()),
-
-
-
-
-
+    path('update/<int:pk>/', TiresRetrieveUpdateDestroyAPIView.as_view()),
 
 ]
