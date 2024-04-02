@@ -2,14 +2,18 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import generics
+from drf_yasg.utils import swagger_auto_schema
 from tires.serializers import (
     TiresSerializer,
     Categoryserializer,
     Reviewsserializer,
-    TiresidSerializer
-
-
+    TiresidSerializer,
+    FavoriteSerializer
 )
+
+from rest_framework import generics
+from .models import *
+
 from rest_framework import status
 from django.db.models import Count
 from tires.models import (
@@ -41,6 +45,12 @@ class Tiresviewid(generics.ListCreateAPIView):
     queryset = Tires.objects.all()
     serializer_class = TiresidSerializer
 
+    @swagger_auto_schema(
+        tags=['Tires'],
+        operation_description="Этот ендпоинт предоставляет "
+                              "возможность посмотреть детально "
+                              "текущий товар по id. ",
+    )
     def get_queryset(self, *args, **kwargs):
         return Tires.objects.filter(id=self.kwargs["tir_id"])
 
@@ -63,6 +73,12 @@ class ReviewsView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Reviews.objects.all()
     serializer_class = Reviewsserializer
 
+    @swagger_auto_schema(
+        tags=['Tires'],
+        operation_description="Этот ендпоинт предоставляет "
+                              "возможность оставить отзыв,"
+                              "так же оценить товар по рейтингу",
+        )
     def post(self, request, *args, **kwargs):
         serializer = Reviewsserializer(data=request.data)
         if serializer.is_valid():
@@ -76,7 +92,6 @@ class ReviewsView(generics.RetrieveUpdateDestroyAPIView):
         else:
             return Reviews.objects.annotate(num_reviews=Count('reviews')).order_by('-num_reviews')
 
-
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data)
@@ -84,7 +99,6 @@ class ReviewsView(generics.RetrieveUpdateDestroyAPIView):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -103,6 +117,13 @@ class TiresRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Tires.objects.all()
     serializer_class = TiresidSerializer
 
+    @swagger_auto_schema(
+        tags=['Tires'],
+        operation_description="Этот ендпоинт предоставляет "
+                              "возможность редактировать "
+                              "текущий товар. ",
+    )
+
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 
@@ -111,3 +132,8 @@ class TiresRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self, *args, **kwargs):
         return Tires.objects.filter(id=self.kwargs["pk"])
+
+
+class Favorite(generics.ListCreateAPIView):
+    serializer_class = FavoriteSerializer
+    queryset = Favorite.objects.all()

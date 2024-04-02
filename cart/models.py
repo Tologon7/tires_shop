@@ -42,16 +42,3 @@ class Order(models.Model):
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
     total_price = models.FloatField(default=1)
 
-
-class Favorite(models.Model):
-    creation_date = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    tires = models.ForeignKey(Tires, on_delete=models.CASCADE)
-
-    class Meta:
-        unique_together = ['user', 'tires']
-
-    def __str__(self):
-        return f"user: {self.user}, tires: {self.tires}"
-
-

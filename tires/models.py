@@ -162,3 +162,15 @@ class Reviews(models.Model):
 
     def __str__(self):
         return f"{self.user}'s - {self.rating} - star rating for {self.tires}"
+
+
+class Favorite(models.Model):
+    creation_date = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    tires = models.ForeignKey(Tires, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ['user', 'tires']
+
+    def __str__(self):
+        return f"user: {self.user}, tires: {self.tires}"

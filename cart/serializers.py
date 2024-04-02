@@ -1,11 +1,6 @@
 from rest_framework import serializers
-from .models import (
-    Cart,
-    CartItem,
-    Order,
-    Favorite,
-    User
-)
+from .models import *
+from rest_framework.exceptions import ValidationError
 
 
 class CartSerializer(serializers.ModelSerializer):
@@ -24,8 +19,9 @@ class CartSerializer(serializers.ModelSerializer):
     def get_total_price(self, obj):
         cart_items = CartItem.objects.filter(cart=obj.id)
         total_price = 0
-        for i in cart_items:
-            total_price += i.tires.price * i.quantity
+        for item in cart_items:
+            if item.tires and hasattr(item.tires, 'price'):
+                total_price += item.tires.price * item.quantity
         return total_price
 
 
@@ -59,6 +55,12 @@ class CartItemSerializer(serializers.ModelSerializer):
 
         return data
 
+    def validate_cart(self, value):
+        user = self.context['request'].user
+        if user.is_authenticated and user.cart.id != value.id:
+            raise ValidationError("You can only add items to your own cart.")
+        return value
+
 
 class OrderSerializer(serializers.ModelSerializer):
     class Meta:
@@ -66,23 +68,3 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class FavoriteSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Favorite
-        fields = [
-            "id",
-            "user",
-            "tires",
-        ]
-
-    def validate(self, data):
-        user = data.get("user")
-        tires = data.get("tires")
-
-        if Favorite.objects.filter(user=user, tires=tires).exists():
-            raise serializers.ValidationError(
-                {"error": "This tire is already in user's favorites list"}
-            )
-
-        return data
