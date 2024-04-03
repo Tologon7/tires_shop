@@ -149,7 +149,6 @@ class Tires(models.Model):
 #     def __str__(self):
 #         return f"{self.user}'s - {self.rating} - star rating for {self.tires}"
 
-
 class Reviews(models.Model):
     tires = models.ForeignKey('Tires', on_delete=models.CASCADE, related_name='reviews')
     user = models.ForeignKey(User, on_delete=models.CASCADE)

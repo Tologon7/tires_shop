@@ -1,9 +1,12 @@
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import generics
+from rest_framework import generics, permissions
+from rest_framework.permissions import IsAuthenticated
+
 from .models import *
 from .serializers import *
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
+from drf_yasg import openapi
 
 
 class CartItemList(generics.ListCreateAPIView):
@@ -14,16 +17,17 @@ class CartItemList(generics.ListCreateAPIView):
 class CartItemListId(generics.ListCreateAPIView):
     queryset = CartItem.objects.all()
     serializer_class = CartItemSerializer
+    # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_cart_id = self.request.user.cart.id
-        return CartItem.objects.filter(cart_id=user_cart_id)
+        user_cartitem_id = self.request.user.cartitem.id
+        return CartItem.objects.filter(cart_id=user_cartitem_id)
 
-    def perform_create(self, serializer):
-        user_cart_id = self.request.user.cart.id
-        if serializer.validated_data['cart_id'] != user_cart_id:
-            raise PermissionDenied("You can only add items to your own cart.")
-        serializer.save()
+    # def perform_create(self, serializer):
+    #     user_cart_id = self.request.user.cart.id
+    #     if serializer.validated_data['cart_id'] != user_cart_id:
+    #         raise PermissionDenied("You can only add items to your own cart.")
+    #     serializer.save()
 
 
 class CartItemRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -36,7 +40,6 @@ class CartItemRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
                               "возможность редактировать "
                               "текущий товар в корзине. ",
     )
-
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)
 

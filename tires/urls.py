@@ -10,6 +10,7 @@ urlpatterns = [
     path('list/', Tiresview.as_view()),
     path('reviews/<int:rev_id>/', ReviewsView.as_view()),
     path('list/edit/<int:pk>/', TiresRetrieveUpdateDestroyAPIView.as_view()),
-    path('favorite/', Favorite.as_view(), name='favorite-list')
+    path('favorite/', FavoriteAPIView.as_view(), name='favorite-list'),
+    path('favorite/remove/<int:book_id>/', RemoveFromFavoritesView.as_view(), name='remove-from-favorites'),
 
 ]
