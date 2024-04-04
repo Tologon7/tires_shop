@@ -7,6 +7,8 @@ from .serializers import *
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
 from drf_yasg import openapi
+# from drf_payments.models import BasePayment
+
 
 
 class CartItemList(generics.ListCreateAPIView):
@@ -60,4 +62,7 @@ class Order(generics.ListCreateAPIView):
     queryset = Order.objects.all()
 
 
-
+# class StripeChargePayment(BasePayment):
+#
+#     class Meta:
+#         db_table = "stripe_charge"

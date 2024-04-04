@@ -2,6 +2,7 @@ from pathlib import Path
 from datetime import timedelta
 from decouple import config
 import cloudinary
+# import os
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -39,8 +40,7 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'cloudinary',
     'decouple',
-
-
+    # 'drf_payments',
 
 ]
 
@@ -191,3 +191,27 @@ SIMPLE_JWT = {
 SWAGGER_SETTINGS = {
     'VALIDATOR_URL': 'http://localhost:8189',
 }
+
+#
+# PAYMENT_MODEL = "stripe_checkout.StripeCheckoutPayment"
+# PAYMENT_CALLBACK_URL = "http://localhost:8000/drf-payments/callback/"
+# PAYMENT_SUCCESS_URL = "http://localhost:3000/payments/success/"
+# PAYMENT_FAILURE_URL = "http://localhost:3000/payments/failure/"
+#
+# PAYMENT_VARIANTS = {
+#     "stripe": (
+#         "drf_payments.stripe.StripeCheckoutProvider",
+#         {
+#             "secret_key": os.environ.get("STRIPE_SECRET_KEY"),
+#             "public_key": os.environ.get("STRIPE_PUBLIC_KEY"),
+#         },
+#     ),
+#     "paypal": (
+#         "drf_payments.paypal.PaypalProvider",
+#         {
+#             "client_id": os.environ.get("PAYPAL_CLIENT_ID"),
+#             "secret": os.environ.get("PAYPAL_SECRET_KEY"),
+#             "endpoint": os.environ.get("PAYPAL_URL", "https://api.sandbox.paypal.com"),
+#         },
+#     ),
+# }

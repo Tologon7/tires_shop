@@ -14,6 +14,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from rest_framework.routers import SimpleRouter
+# from drf_payments.mixins import PaymentViewMixin
 
 router = DefaultRouter()
 router.register(r'carts', CartItemList)
@@ -45,4 +47,15 @@ urlpatterns = [
     path('swagger<format>/', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    # path("drf-payments/", include("drf_payments.urls")),
 ]
+
+
+
+
+# app_name = "shop"
+#
+# router = SimpleRouter()
+# router.register("payment", PaymentViewMixin, basename="payment")
+#
+# urlpatterns = [*router.urls]
