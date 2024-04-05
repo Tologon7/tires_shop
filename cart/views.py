@@ -22,8 +22,10 @@ class CartItemListId(generics.ListCreateAPIView):
     # permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        user_cartitem_id = self.request.user.cartitem.id
-        return CartItem.objects.filter(cart_id=user_cartitem_id)
+        cart_id = self.kwargs.get('cart_id')
+        # Фильтрация объектов CartItem по id корзины
+        queryset = CartItem.objects.filter(cart_id=cart_id)
+        return queryset
 
     # def perform_create(self, serializer):
     #     user_cart_id = self.request.user.cart.id

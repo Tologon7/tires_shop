@@ -57,8 +57,11 @@ class CartItemSerializer(serializers.ModelSerializer):
 
     def validate_cart(self, value):
         user = self.context['request'].user
-        if user.is_authenticated and user.cart.id != value.id:
-            raise ValidationError("You can only add items to your own cart.")
+        if user.is_authenticated:
+            if user.cart != value:
+                raise serializers.ValidationError("You can only add items to your own cart.")
+        else:
+            raise serializers.ValidationError("You must be authenticated to perform this action.")
         return value
 
 

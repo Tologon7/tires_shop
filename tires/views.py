@@ -5,13 +5,14 @@ from rest_framework.decorators import api_view
 from rest_framework import generics, permissions
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework.views import APIView
 
 from tires.serializers import (
     TiresSerializer,
     Categoryserializer,
     Reviewsserializer,
     TiresidSerializer,
-    FavoriteSerializer
+    FavoriteSerializer, TiresCreateSerializer
 )
 
 from rest_framework import generics
@@ -25,19 +26,6 @@ from tires.models import (
     Reviews,
     Favorite
 )
-
-
-class Categoryviewid(generics.ListAPIView):
-    queryset = Category.objects.all()
-    serializer_class = Categoryserializer
-
-    def get_queryset(self, *args, **kwargs):
-        return Category.objects.filter(id=self.kwargs["cat_id"])
-
-
-class Categoryview(generics.ListAPIView):
-    queryset = Category.objects.all()
-    serializer_class = Categoryserializer
 
 
 class Tiresview(generics.ListCreateAPIView):
@@ -58,6 +46,10 @@ class Tiresviewid(generics.ListCreateAPIView):
     def get_queryset(self, *args, **kwargs):
         return Tires.objects.filter(id=self.kwargs["tir_id"])
 
+
+class TiresCreateAPIView(generics.CreateAPIView):
+    queryset = Tires.objects.all()
+    serializer_class = TiresCreateSerializer
 
 # class Reviewsview(generics.ListCreateAPIView):
 #     queryset = Reviews.objects.all()
@@ -83,18 +75,18 @@ class ReviewsView(generics.RetrieveUpdateDestroyAPIView):
                               "возможность оставить отзыв,"
                               "так же оценить товар по рейтингу",
         )
+    def get_queryset(self):
+        if 'pk' in self.kwargs:
+            return Reviews.objects.filter(id=self.kwargs["pk"])
+        else:
+            return Reviews.objects.annotate(num_reviews=Count('reviews')).order_by('-num_reviews')
+
     def post(self, request, *args, **kwargs):
         serializer = Reviewsserializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def get_queryset(self):
-        if 'pk' in self.kwargs:
-            return Reviews.objects.filter(id=self.kwargs["pk"])
-        else:
-            return Reviews.objects.annotate(num_reviews=Count('reviews')).order_by('-num_reviews')
 
     def update(self, request, *args, **kwargs):
         instance = self.get_object()

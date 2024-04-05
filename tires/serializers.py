@@ -38,6 +38,41 @@ class TiresSerializer(serializers.ModelSerializer):
 #         model = Tires
 #         fields = "__all__"
 
+
+class TiresCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tires
+        fields = [
+            'id',
+            'title',
+            'category',
+            'width',
+            'profile',
+            'diameter',
+            'price',
+            'promotion',
+            'quantity',
+            'car_type',
+            'seasonality',
+            'state',
+            'manufacturer',
+            'discount',
+            'runflat',
+            'offroad',
+            'speed_index',
+            'load_index',
+            'fuel_economy',
+            'grip_on_wet_surfaces',
+            'external_noise_level',
+            'set',
+            'in_stock',
+            'model',
+            'load_index_for_dual'
+
+        ]
+
+
+
 class TiresidSerializer(serializers.ModelSerializer):
     # title = serializers.SerializerMethodField()
     category = serializers.SerializerMethodField()
@@ -175,28 +210,16 @@ class Categoryserializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class Reviewsserializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Reviews
-#         fields = '__all__'
-#
-#     def create(self, validated_data):
-#         tir_id = self.context["tir_id"]
-#         user_id = self.context["user_id"]
-#         rating = Reviews.objects.create(tir_id=tir_id, user_id=user_id, **self.validated_data)
-#         return rating
-
-
 class Reviewsserializer(serializers.ModelSerializer):
     class Meta:
         model = Reviews
-        fields = '__all__'
-
-    def create(self, validated_data):
-        tir_id = self.context.get("tir_id")
-        user_id = self.context.get("user_id")
-        review = Reviews.objects.create(tires_id=tir_id, user_id=user_id, **validated_data)
-        return review
+        fields = [
+            'id'
+            'user',
+            'tires',
+            'comment',
+            'rating'
+        ]
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
