@@ -33,7 +33,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
-DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG = os.environ.get("DEBUG", "False").lower() == "True"
 ALLOWED_HOSTS = ['*']
 
 
@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+database_url = os.environ.get("DATABASE_URL")
 DATABASES = {
     'default': dj_database_url.parse("postgresql://tirespostgresql_user:jAu5tiIYYWFdfQO2iNYrT3QFTf0u0r3n@dpg-cuupl62j1k6c73a0eg6g-a.oregon-postgres.render.com/tirespostgresql")
 }
