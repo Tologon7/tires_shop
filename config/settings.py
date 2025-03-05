@@ -114,19 +114,22 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',  # Разрешаем доступ всем
+        # 'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.AllowAny',
     ],
+
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',  # Используются обе аутентификации
+        'rest_framework.authentication.SessionAuthentication',  # Обе аутентификации
     ],
+
     'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',  # Обрабатываем JSON запросы
+        'rest_framework.parsers.JSONParser',  # Добавлено для обработки JSON запросов
     ],
 }
-
 
 
 
