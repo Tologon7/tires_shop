@@ -31,7 +31,7 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
     # Аутентификация (с редиректом на Swagger после выхода)
-    path('accounts/logout/', auth_views.LogoutView.as_view(next_page='/swagger/'), name='logout'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
 # Статические файлы
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
