@@ -5,19 +5,19 @@ from django.conf.urls.static import static
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
-
-# Создаем схему Swagger
+from rest_framework.permissions import AllowAny
+# Создаем объект schema_view для Swagger
 schema_view = get_schema_view(
     openapi.Info(
-        title="API для работы с товарами и акциями",
+        title="Your API",
         default_version='v1',
-        description="Описание API для работы с товарами и их акциями",
-        terms_of_service="https://www.your-terms-of-service.com",
-        contact=openapi.Contact(email="contact@yourdomain.com"),
-        license=openapi.License(name="MIT License"),
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@yourapi.local"),
+        license=openapi.License(name="BSD License"),
     ),
     public=True,
-    permission_classes=(permissions.AllowAny,),
+    permission_classes=(AllowAny,),  # Разрешаем доступ всем
 )
 
 urlpatterns = [
