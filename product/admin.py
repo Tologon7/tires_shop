@@ -7,8 +7,8 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ['title', 'category__label']
     list_filter = ['category', 'promotion_category']
 
-    # Поле для выбора категорий акций
+
     filter_horizontal = ('promotion_category',)
-# Register your models here.
+
 admin.site.register(Product)
 admin.site.register(Category)

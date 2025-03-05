@@ -37,8 +37,7 @@ class HomepageView(APIView):
                                     "price": "100.00",
                                     "seasonality": "summer",
                                     "is_favorite": True,
-                                    "set": True,
-                                    "in_stock": True
+                                    "in_stock": 49
                                 }
                             ],
                             "promotions": [
@@ -76,8 +75,8 @@ class HomepageView(APIView):
                                             'price': openapi.Schema(type=openapi.TYPE_STRING, description='Цена товара'),
                                             'seasonality': openapi.Schema(type=openapi.TYPE_STRING, description='Сезонность товара'),
                                             'is_favorite': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='Товар в избранном'),
-                                            'set': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='Комплект товара'),
-                                            'in_stock': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='В наличии')
+
+                                            'in_stock': openapi.Schema(type=openapi.TYPE_INTEGER, description='количество в складе ')
                                         }
                                     )
                                 ),
@@ -112,7 +111,7 @@ class HomepageView(APIView):
         }
     )
     def get(self, request):
-        # Логика получения данных
+
         products = Product.objects.annotate(
             comments_count=Count('comment'),
             average_rating=Avg('comment__rating')
@@ -137,12 +136,10 @@ class HomepageView(APIView):
                 "price": str(product.price),
                 "seasonality": product.seasonality,
                 "is_favorite": product.is_favorite,
+                "in_stock": product.in_stock,
             }
 
-            if product.set:
-                product_data["set"] = True
-            elif product.in_stock:
-                product_data["in_stock"] = True
+
 
             popular_products.append(product_data)
 

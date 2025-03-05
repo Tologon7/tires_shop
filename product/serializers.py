@@ -38,40 +38,38 @@ class CategoriesSerializer(serializers.ModelSerializer):
 
 
 class ProductSerializerHomepage(serializers.ModelSerializer):
-    product_Id = serializers.IntegerField(source='id')  # Переименовываем 'id' в 'productId'
+    product_Id = serializers.IntegerField(source='id')
     average_rating = serializers.SerializerMethodField()
     comments_count = serializers.IntegerField(source="comment_set.count", read_only=True)
     image = serializers.SerializerMethodField()
-    set = serializers.SerializerMethodField()
-    in_stock = serializers.SerializerMethodField()
     promotion_category = CategoriesSerializer(many=True, read_only=True)
 
     class Meta:
         model = Product
-        fields = ['product_Id','image','seasonality', "average_rating", "comments_count", 'title',  "set",  # Показываем только если True
-            "in_stock", 'price', 'is_favorite', 'promotion_category', ]
+        fields = ['product_Id','image','seasonality', "average_rating", "comments_count", 'title'
+            "quantity", 'price', 'is_favorite', 'promotion_category' ]
 
     def get_image(self, obj):
         if obj.image:
-            return obj.image.url  # Возвращаем URL изображения, если оно есть
+            return obj.image.url
         return None
     def get_comments_count(self, obj):
-        return obj.comments.count()  # Количество комментариев
+        return obj.comments.count()
 
     def get_average_rating(self, obj):
-        return obj.average_rating  # Средний рейтинг
+        return obj.average_rating
 
     def get_set(self, obj):
         if obj.set:
             return True
-        return None  # Если False, то ничего не показываем
+        return None
 
     def get_in_stock(self, obj):
         if obj.in_stock:
             return True
-        return None  # Если False, то ничего не показываем
+        return None
     def get_average_rating(self, obj):
-        """Вычисляет средний рейтинг продукта на лету."""
+
         comments = obj.comment_set.all()
         from .views import round_to_half
         if not comments:
@@ -83,7 +81,7 @@ class ProductSerializerHomepage(serializers.ModelSerializer):
 
 
 class FavoriteProductListSerializer(serializers.ModelSerializer):
-    product_Id = serializers.IntegerField(source='id')  # Переименовываем 'id' в 'productId'
+    product_Id = serializers.IntegerField(source='id')
 
     class Meta:
         model = Product

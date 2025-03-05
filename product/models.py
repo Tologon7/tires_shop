@@ -13,7 +13,7 @@ class Product(models.Model):
     promotion = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     promotion_end_date = models.DateTimeField(null=True, blank=True)
     description = models.TextField()
-    quantity = models.IntegerField()
+    in_stock = models.IntegerField()
     seasonality = models.CharField(max_length=100, null=True, blank=True)
     profile = models.CharField(max_length=50, null=True, blank=True)
     diameter = models.CharField(max_length=100)
@@ -24,8 +24,7 @@ class Product(models.Model):
 
     # characteristics = models.TextField(null=True, blank=True)
     is_favorite = models.BooleanField(default=False)
-    in_stock = models.BooleanField(default=False)
-    set = models.BooleanField(default=False)
+
 
     def __str__(self):
         return f"{self.title} - {self.id}"
