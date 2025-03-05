@@ -1,25 +1,55 @@
-from django.db import models
-
-# Create your models here.
 
 from django.db import models
-
+from django.core.validators import MinValueValidator, MaxValueValidator
+from cloudinary.models import CloudinaryField
 # Create your models here.
 
 
 class Product(models.Model):
     title = models.CharField(max_length=100)
-    price = models.DecimalField(max_digits=10, decimal_places=5)
+    image = CloudinaryField('image')
+    category = models.ForeignKey('Category', on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    promotion = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    promotion_end_date = models.DateTimeField(null=True, blank=True)
     description = models.TextField()
-    promotion = models.DecimalField(max_digits=10, decimal_places=5)
     quantity = models.IntegerField()
     seasonality = models.CharField(max_length=100, null=True, blank=True)
     profile = models.CharField(max_length=50, null=True, blank=True)
     diameter = models.CharField(max_length=100)
     speed_index = models.CharField(max_length=100)
-    load_indices = models.IntegerField()
-    load_indices_for_double = models.IntegerField()
-    characteristics = models.TextField(null=True, blank=True)
+    load_indices = models.CharField(max_length=500)
+    load_indices_for_double = models.CharField(max_length=200)
+    promotion_category = models.ManyToManyField('Category', blank=True, related_name='promotion_products')
+
+    # characteristics = models.TextField(null=True, blank=True)
+    is_favorite = models.BooleanField(default=False)
+    in_stock = models.BooleanField(default=False)
+    set = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.title} - {self.id}"
+
+
+
+
+
+class Category(models.Model):
+    label = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.label
+
+    def get_value(self):
+        return self.value  # Возвращает английский текст
+
+
+class Comment(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    comment = models.TextField()
+    rating = models.FloatField(validators=[MinValueValidator(1.0), MaxValueValidator(5.0)])  # Рейтинг от 1 до 5
+    created_at = models.DateTimeField(auto_now_add=True)  # Дата создания
+
+    def __str__(self):
+        return f"Comment for {self.product.name} - {self.rating}★"

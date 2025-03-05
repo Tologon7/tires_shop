@@ -53,7 +53,9 @@ INSTALLED_APPS = [
     'product',
     'users',
     'cart',
-
+    'cloudinary',
+    'cloudinary_storage',
+    'drf_yasg',
 
 ]
 
@@ -92,7 +94,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 database_url = os.environ.get("DATABASE_URL")
 DATABASES = {
-    'default': dj_database_url.parse("postgresql://tirespostgresql_user:jAu5tiIYYWFdfQO2iNYrT3QFTf0u0r3n@dpg-cuupl62j1k6c73a0eg6g-a.oregon-postgres.render.com/tirespostgresql")
+    'default': dj_database_url.parse("postgresql://tires_shop_database_user:WwvunQtkU5XAhXvo8sUjZwN0KfMh16nI@dpg-cv27jv52ng1s738ndfug-a.oregon-postgres.render.com/tires_shop_database")
 }
 
 # Password validation
@@ -154,6 +156,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY': config('CLOUDINARY_API_KEY'),
+    'API_SECRET': config('CLOUDINARY_API_SECRET'),
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 
 # Default primary key field type
