@@ -159,6 +159,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': None,  # Отключает авторизацию
+    'USE_SESSION_AUTH': False,  # Отключает привязку к сессии Django Admin
+    'LOGIN_URL': None,
+    'LOGOUT_URL': None,
+}
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
     'API_KEY': config('CLOUDINARY_API_KEY'),
