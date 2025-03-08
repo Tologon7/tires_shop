@@ -46,8 +46,8 @@ class ProductSerializerHomepage(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['product_Id','image','seasonality', "average_rating", "comments_count", 'title'
-            "quantity", 'price', 'is_favorite', 'promotion_category' ]
+        fields = ['product_Id', 'image', 'seasonality', 'average_rating', 'comments_count', 'title', 'in_stock', 'price', 'is_favorite', 'promotion_category']
+
 
     def get_image(self, obj):
         if obj.image:
@@ -59,15 +59,8 @@ class ProductSerializerHomepage(serializers.ModelSerializer):
     def get_average_rating(self, obj):
         return obj.average_rating
 
-    def get_set(self, obj):
-        if obj.set:
-            return True
-        return None
 
-    def get_in_stock(self, obj):
-        if obj.in_stock:
-            return True
-        return None
+
     def get_average_rating(self, obj):
 
         comments = obj.comment_set.all()
@@ -101,3 +94,4 @@ class CommentSerializer(serializers.ModelSerializer):
         if not Product.objects.filter(id=value).exists():
             raise serializers.ValidationError("Такого продукта не существует")
         return value
+

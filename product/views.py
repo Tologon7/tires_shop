@@ -3,19 +3,41 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.shortcuts import render, get_object_or_404
 from rest_framework import generics
+import logging
 from rest_framework.views import APIView
 from .models import Product, Category, Comment
 from .serializers import ProductSerializerHomepage, CategoriesSerializer,  FavoriteProductListSerializer  , CommentSerializer# Подключаем сериализатор
 from rest_framework.response import Response
 from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+import django_filters
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from rest_framework.permissions import AllowAny
 from django.db.models import Count, Avg, F
+from rest_framework import filters
 from django.utils import timezone
+from .filters import ProductFilter
 from datetime import timedelta
-class HomepageView(APIView):
+from rest_framework.generics import ListAPIView
+from .filters import ProductFilter
+from django_filters.rest_framework import DjangoFilterBackend
+logger = logging.getLogger(__name__)
+class HomepageView(ListAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializerHomepage
+    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    filterset_class = ProductFilter
 
+    def get(self, request, *args, **kwargs):
+        logger.debug(f"Request filters: {request.GET}")  # Логируем параметры запроса
+        response = super().get(request, *args, **kwargs)
+        logger.debug(f"Response data: {response.data}")  # Логируем ответ
+        return response
+
+    def get(self, request, *args, **kwargs):
+        logger.debug(f"Request filters: {request.GET}")  # Логируем параметры запроса
+        return super().get(request, *args, **kwargs)
 
     @swagger_auto_schema(
         tags=['homepage'],
@@ -75,8 +97,7 @@ class HomepageView(APIView):
                                             'price': openapi.Schema(type=openapi.TYPE_STRING, description='Цена товара'),
                                             'seasonality': openapi.Schema(type=openapi.TYPE_STRING, description='Сезонность товара'),
                                             'is_favorite': openapi.Schema(type=openapi.TYPE_BOOLEAN, description='Товар в избранном'),
-
-                                            'in_stock': openapi.Schema(type=openapi.TYPE_INTEGER, description='количество в складе ')
+                                            'in_stock': openapi.Schema(type=openapi.TYPE_INTEGER, description='Количество в складе ')
                                         }
                                     )
                                 ),
@@ -111,7 +132,6 @@ class HomepageView(APIView):
         }
     )
     def get(self, request):
-
         products = Product.objects.annotate(
             comments_count=Count('comment'),
             average_rating=Avg('comment__rating')
@@ -138,9 +158,6 @@ class HomepageView(APIView):
                 "is_favorite": product.is_favorite,
                 "in_stock": product.in_stock,
             }
-
-
-
             popular_products.append(product_data)
 
         promotions = Product.objects.filter(
@@ -185,8 +202,6 @@ class HomepageView(APIView):
         }
 
         return Response(homepage_data)
-
-
 class CategoriesListView(APIView):
     def get(self, request):
         categories = Category.objects.all()

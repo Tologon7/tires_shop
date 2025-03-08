@@ -51,11 +51,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'product',
+    'django_filters',
     'users',
     'cart',
     'cloudinary',
     'cloudinary_storage',
     'drf_yasg',
+    "corsheaders",
+
 
 ]
 
@@ -67,6 +70,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "corsheaders.middleware.CorsMiddleware",  # Должно быть в начале!
+    "django.middleware.common.CommonMiddleware",
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -114,25 +119,27 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
-        # 'rest_framework.permissions.IsAuthenticated',
         'rest_framework.permissions.AllowAny',
     ],
-
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',  # Обе аутентификации
+        'rest_framework.authentication.SessionAuthentication',
     ],
-
     'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',  # Добавлено для обработки JSON запросов
+        'rest_framework.parsers.JSONParser',
     ],
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',  # Для фильтрации
+        'rest_framework.filters.SearchFilter',  # Для поиска
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ],
+    'SEARCH_PARAM': 'search',  # Параметр для поиска
 }
-
-
-
 
 
 # Internationalization
@@ -174,8 +181,17 @@ CLOUDINARY_STORAGE = {
 
 DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
+CORS_ALLOWED_ORIGINS = [
 
+    "https://tires-shop-test.onrender.com",  # Если фронтенд развернут
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_METHODS = [
+    "GET",
+    "POST",
+    "OPTIONS",
+]

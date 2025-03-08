@@ -21,11 +21,13 @@ class Product(models.Model):
     load_indices = models.CharField(max_length=500)
     load_indices_for_double = models.CharField(max_length=200)
     promotion_category = models.ManyToManyField('Category', blank=True, related_name='promotion_products')
-
-    # characteristics = models.TextField(null=True, blank=True)
     is_favorite = models.BooleanField(default=False)
 
-
+    manufacturer = models.CharField(max_length=200)
+    model = models.CharField(max_length=255)
+    generation = models.CharField(max_length=100, blank=True, null=True)
+    modification = models.CharField(max_length=255, blank=True, null=True)
+    body_type = models.CharField(max_length=255, blank=True, null=True)
     def __str__(self):
         return f"{self.title} - {self.id}"
 
