@@ -3,10 +3,13 @@ from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from django.shortcuts import render, get_object_or_404
 from rest_framework import generics
+from rest_framework.generics import GenericAPIView
+from django.db.models import Count, Avg, F
+
 import logging
 from rest_framework.views import APIView
 from .models import Product, Category, Comment
-from .serializers import ProductSerializerHomepage, CategoriesSerializer,  FavoriteProductListSerializer  , CommentSerializer# Подключаем сериализатор
+from .serializers import ProductSerializerHomepage, CategoriesSerializer,  FavoriteProductListSerializer  , CommentSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from django_filters.rest_framework import DjangoFilterBackend
@@ -19,6 +22,7 @@ from rest_framework import filters
 from django.utils import timezone
 from .filters import ProductFilter
 from datetime import timedelta
+from rest_framework.filters import SearchFilter
 from rest_framework.generics import ListAPIView
 from .filters import ProductFilter
 from django_filters.rest_framework import DjangoFilterBackend
@@ -26,18 +30,31 @@ logger = logging.getLogger(__name__)
 class HomepageView(ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializerHomepage
-    filter_backends = [DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ProductFilter
 
     def get(self, request, *args, **kwargs):
-        logger.debug(f"Request filters: {request.GET}")  # Логируем параметры запроса
-        response = super().get(request, *args, **kwargs)
-        logger.debug(f"Response data: {response.data}")  # Логируем ответ
-        return response
+        queryset = self.filter_queryset(self.get_queryset())  # Применяем фильтры
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
 
-    def get(self, request, *args, **kwargs):
-        logger.debug(f"Request filters: {request.GET}")  # Логируем параметры запроса
-        return super().get(request, *args, **kwargs)
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        # Выводим SQL-запрос в консоль
+        print("SQL Query:", str(queryset.query))
+
+        return queryset
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = self.filter_queryset(queryset)  # Применяем фильтры вручную
+        print("SQL после фильтрации:", queryset.query)  # Смотрим, изменился ли SQL-запрос
+        return queryset
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        print("SQL:", queryset.query)  # Проверяем SQL-запрос в консоли
+        return queryset
 
     @swagger_auto_schema(
         tags=['homepage'],
@@ -203,6 +220,7 @@ class HomepageView(ListAPIView):
 
         return Response(homepage_data)
 class CategoriesListView(APIView):
+
     def get(self, request):
         categories = Category.objects.all()
         serializer = CategoriesSerializer(categories, many=True)

@@ -51,15 +51,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_extensions',
     'product',
-    'django_filters',
     'users',
     'cart',
     'cloudinary',
     'cloudinary_storage',
     'drf_yasg',
     "corsheaders",
-
-
+    'django_filters',
 ]
 
 MIDDLEWARE = [

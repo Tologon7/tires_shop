@@ -1,6 +1,6 @@
+# filters.py
 import django_filters
 from .models import Product
-
 
 class ProductFilter(django_filters.FilterSet):
     manufacturer = django_filters.CharFilter(field_name="manufacturer", lookup_expr="icontains")
@@ -11,11 +11,4 @@ class ProductFilter(django_filters.FilterSet):
 
     class Meta:
         model = Product
-        fields = {
-            'manufacturer': ['exact', 'icontains'],
-            'model': ['exact', 'icontains'],
-            'generation': ['exact', 'icontains'],
-            'modification': ['exact', 'icontains'],
-            'body_type': ['exact', 'icontains'],
-            'price': ['gte', 'lte'],  # Добавим фильтр по цене (от/до)
-        }
+        fields = ['manufacturer', 'model', 'generation', 'modification', 'body_type']
