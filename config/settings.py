@@ -27,7 +27,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-print(os.getenv("SECRET_KEY"))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -48,11 +47,13 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'django_extensions',
+
     'product',
     'users',
     'cart',
+
+    'rest_framework',
+    'django_extensions',
     'cloudinary',
     'cloudinary_storage',
     'drf_yasg',
@@ -95,9 +96,16 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-database_url = os.environ.get("DATABASE_URL")
+# database_url = os.environ.get("DATABASE_URL")
+# DATABASES = {
+#     'default': dj_database_url.parse("postgresql://tires_shop_database_user:WwvunQtkU5XAhXvo8sUjZwN0KfMh16nI@dpg-cv27jv52ng1s738ndfug-a.oregon-postgres.render.com/tires_shop_database")
+# }
+
 DATABASES = {
-    'default': dj_database_url.parse("postgresql://tires_shop_database_user:WwvunQtkU5XAhXvo8sUjZwN0KfMh16nI@dpg-cv27jv52ng1s738ndfug-a.oregon-postgres.render.com/tires_shop_database")
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 # Password validation
@@ -125,11 +133,11 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
-    'DEFAULT_PARSER_CLASSES': [
-        'rest_framework.parsers.JSONParser',
-    ],
+    # 'DEFAULT_PARSER_CLASSES': [
+    #     'rest_framework.parsers.JSONParser',
+    # ],
     'DEFAULT_FILTER_BACKENDS': [
-        'django_filters.rest_framework.DjangoFilterBackend',  # Для фильтрации
+        'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',  # Для поиска
     ],
     'DEFAULT_RENDERER_CLASSES': [
@@ -193,3 +201,14 @@ CORS_ALLOW_METHODS = [
     "POST",
     "OPTIONS",
 ]
+
+
+AUTH_USER_MODEL = 'users.User'
+
+# email settings
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')

@@ -4,7 +4,8 @@ from drf_yasg import openapi
 from django.shortcuts import render, get_object_or_404
 from rest_framework import generics
 from rest_framework.generics import GenericAPIView
-from django.db.models import Count, Avg, F
+from django.db.models import Count, Avg, F, Q
+from django.core.exceptions import ValidationError
 
 import logging
 from rest_framework.views import APIView
@@ -27,33 +28,47 @@ from rest_framework.generics import ListAPIView
 from .filters import ProductFilter
 from django_filters.rest_framework import DjangoFilterBackend
 logger = logging.getLogger(__name__)
+
+
 class HomepageView(ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializerHomepage
-    filter_backends = [DjangoFilterBackend, SearchFilter]
-    filterset_class = ProductFilter
+    filter_backends = [DjangoFilterBackend, SearchFilter]  # Подключаем фильтрацию
+    filterset_class = ProductFilter  # Фильтр по категории
+    search_fields = ['title', 'description', 'category__label']  # Поиск по этим полям
 
     def get(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())  # Применяем фильтры
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+            queryset = self.filter_queryset(self.get_queryset())  # Применяем фильтры
+            serializer = self.get_serializer(queryset, many=True)
+            return Response(serializer.data)
 
     def get_queryset(self):
+        """
+        Реализация фильтрации товаров.
+        """
         queryset = super().get_queryset()
 
-        # Выводим SQL-запрос в консоль
-        print("SQL Query:", str(queryset.query))
+        # Получаем значения фильтров из параметров запроса
+        category_value = self.request.query_params.get('category', '').strip()
+        search_value = self.request.query_params.get('search', '').strip()
 
-        return queryset
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = self.filter_queryset(queryset)  # Применяем фильтры вручную
-        print("SQL после фильтрации:", queryset.query)  # Смотрим, изменился ли SQL-запрос
-        return queryset
+        # Создаем объект фильтрации
+        filters = Q()
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        print("SQL:", queryset.query)  # Проверяем SQL-запрос в консоли
+        # Фильтр по категории
+        if category_value:
+            if Category.objects.filter(value__iexact=category_value).exists():
+                filters &= Q(category__value__iexact=category_value)
+
+        # Фильтр по поисковому запросу
+        if search_value:
+            filters &= Q(title__icontains=search_value) | Q(description__icontains=search_value) | \
+                       Q(price__icontains=search_value) | Q(promotion__icontains=search_value) | \
+                       Q(category__label__icontains=search_value)
+
+        # Применяем фильтры к queryset
+        queryset = queryset.filter(filters)
+
         return queryset
 
     @swagger_auto_schema(
@@ -219,6 +234,8 @@ class HomepageView(ListAPIView):
         }
 
         return Response(homepage_data)
+
+
 class CategoriesListView(APIView):
 
     def get(self, request):
@@ -233,7 +250,6 @@ class CategoriesListView(APIView):
             # Возвращаем label и value
             return Response({'label': category.label, 'value': category.value}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 
 class FavoriteProduct(APIView):
@@ -300,6 +316,7 @@ def round_to_half(value):
 def update_product_rating(sender, instance, **kwargs):
     """Этот метод теперь просто триггерит обновление кеша, если нужно, но ничего не сохраняет в БД."""
     product = instance.product
+
 
 class ProductCommentListView(generics.ListAPIView):
     """

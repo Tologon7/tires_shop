@@ -1,8 +1,7 @@
-
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 from cloudinary.models import CloudinaryField
-# Create your models here.
+from django.core.exceptions import ValidationError
 
 
 class Product(models.Model):
@@ -28,22 +27,27 @@ class Product(models.Model):
     generation = models.CharField(max_length=100, blank=True, null=True)
     modification = models.CharField(max_length=255, blank=True, null=True)
     body_type = models.CharField(max_length=255, blank=True, null=True)
+
     def __str__(self):
         return f"{self.title} - {self.id}"
 
 
-
-
-
 class Category(models.Model):
-    label = models.CharField(max_length=100)
-    value = models.CharField(max_length=100)
+    label = models.CharField(max_length=200, unique=True)
+    value = models.CharField(max_length=50, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.value:
+            self.value = self.label.lower()
+
+        # Проверяем, существует ли уже категория с таким label
+        if Category.objects.filter(label=self.label).exclude(pk=self.pk).exists():
+            raise ValidationError("Category with this label already exists.")
+
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.label
-
-    def get_value(self):
-        return self.value  # Возвращает английский текст
 
 
 class Comment(models.Model):
