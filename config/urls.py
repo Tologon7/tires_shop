@@ -8,7 +8,11 @@ from rest_framework import permissions
 from rest_framework.permissions import AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import views as auth_views
+from allauth.socialaccount.views import LoginCancelledView, LoginErrorView
+
+
 # Создаем объект schema_view для Swagger
+
 schema_view = get_schema_view(
     openapi.Info(
         title="Your API",
@@ -21,11 +25,14 @@ schema_view = get_schema_view(
     public=True,
     permission_classes=(AllowAny,),  # Разрешаем доступ всем
 )
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('product/', include("product.urls")),
     path('users/', include("users.urls")),
-
+    path('auth/', include('dj_rest_auth.urls')),
+    # path('auth/social/', include('allauth.socialaccount.urls')),
+    # path("accounts/", include("allauth.urls")),
 
     # Swagger
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='swagger-docs'),
@@ -35,8 +42,6 @@ urlpatterns = [
     # Аутентификация (с редиректом на Swagger после выхода)
     path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
+
 # Статические файлы
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-
-
